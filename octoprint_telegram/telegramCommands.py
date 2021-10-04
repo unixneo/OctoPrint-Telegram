@@ -37,6 +37,7 @@ class TCMD:
             "SwitchOff": {"cmd": self.cmdSwitchOff, "param": True},
             "/test": {"cmd": self.cmdTest, "bind_none": True},
             "/status": {"cmd": self.cmdStatus},
+            "/stat": {"cmd": self.cmdStat},  # unixneo 4/10/21  add start command (status without image)
             "/gif": {"cmd": self.cmdGif},  # giloser 05/05/19 add gif command
             "/supergif": {"cmd": self.cmdSuperGif},  # giloser 05/05/19 add gif command
             "/settings": {"cmd": self.cmdSettings, "param": True},
@@ -91,6 +92,20 @@ class TCMD:
             ],
             chatID=chat_id,
         )
+
+    ############################################################################################
+    def cmdStat(self, chat_id, from_id, cmd, parameter, user = ""):
+        if not self.main._printer.is_operational():
+            self.main.send_msg(
+                self.gEmo("warning")
+                + gettext(" Not connected to a printer. Use /con to connect."),
+                chatID=chat_id,
+                inline=False,
+            )
+        elif self.main._printer.is_printing():
+            self.main.on_event("StatusPrinting", {}, chatID=chat_id)
+        else:
+            self.main.on_event("StatNotPrinting", {}, chatID=chat_id)
 
     ############################################################################################
     def cmdStatus(self, chat_id, from_id, cmd, parameter, user = ""):
@@ -2753,6 +2768,7 @@ class TCMD:
                 "/shutup - Disables automatic notifications till the next print ends.\n"
                 "/dontshutup - The opposite of /shutup - Makes the bot talk again.\n"
                 "/status - Sends the current status including a current photo.\n"
+                "/stat - Sends the current status with not photo.\n"
                 "/gif - Sends a gif from the current video. "
                 + self.gEmo("warning")
                 + " \n"

@@ -87,6 +87,17 @@ telegramMsgDict = {
         "combined": True,
         "markup": "off",
     },
+    "StatNotPrinting": {
+        "text": gettext(
+            "Not printing.\nBed {bed_temp}/{bed_target}, Extruder {e1_temp}/{e1_target}."
+        ),
+        "image": False,
+        "silent": False,
+        "gif": False,
+        "combined": True,
+        "markup": "off",
+        "no_setting": True,
+    },
     "StatusNotPrinting": {
         "text": gettext(
             "Not printing.\nBed {bed_temp}/{bed_target}, Extruder {e1_temp}/{e1_target}."
@@ -228,6 +239,7 @@ class TMSG:
             "ZChange": self.msgZChange,
             "PrintDone": self.msgPrintDone,
             "StatusNotPrinting": self.msgStatusNotPrinting,
+            "StatNotPrinting": self.msgStatNotPrinting,
             "StatusPrinting": self.msgStatusPrinting,
             "plugin_pause_for_user_event_notify": self.msgPauseForUserEventNotify,
             "gCode_M600": self.msgColorChangeRequested,
@@ -300,6 +312,10 @@ class TMSG:
         self._sendNotification(payload, **kwargs)
 
     def msgStatusNotPrinting(self, payload, **kwargs):
+        self.track = False
+        self._sendNotification(payload, **kwargs)
+
+    def msgStatNotPrinting(self, payload, **kwargs):
         self.track = False
         self._sendNotification(payload, **kwargs)
 
